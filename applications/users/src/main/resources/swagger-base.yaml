@@ -1,0 +1,5 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: Users Api
+  description: 'Microservice for User Domain'

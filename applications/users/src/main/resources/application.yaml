@@ -1,0 +1,6 @@
+spring:
+  banner:
+    location: classpath:/banner.txt
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/test

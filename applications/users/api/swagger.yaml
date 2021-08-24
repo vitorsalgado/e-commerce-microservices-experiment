@@ -1,0 +1,27 @@
+openapi: 3.0.3
+info:
+  title: Users Api
+  description: Microservice for User Domain
+  version: "1.0"
+paths:
+  /users:
+    post:
+      operationId: register
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RegisterUseCase'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouterFunctionServerResponse'
+components:
+  schemas:
+    RouterFunctionServerResponse:
+      type: object
+    RegisterUseCase:
+      type: object

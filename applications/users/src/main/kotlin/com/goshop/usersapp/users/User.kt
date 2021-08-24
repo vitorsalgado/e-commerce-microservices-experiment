@@ -1,20 +1,26 @@
 package com.goshop.usersapp.users
 
-import java.time.LocalDate
+import com.goshop.usersapp.utils.cryptograph.Crypt.createPasswordHash
+import com.goshop.usersapp.utils.cryptograph.Crypt.createSalt
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 import java.util.UUID
 
-class User {
-  val id: String
-  val email: String
-  val name: String
-  val birth: LocalDate?
-  val addresses: List<Address>
+@Document
+class User(
+  @Id
+  val id: UUID,
+  val email: String,
+  val name: String,
+  val passwordHash: String,
+  val salt: String
+) {
+  companion object {
+    fun newUser(email: String, name: String, password: String): User {
+      val salt = createSalt()
+      val hashedPassword = createPasswordHash(password, salt)
 
-  constructor(email: String, name: String, passwordHash: String) {
-    this.id = UUID.randomUUID().toString()
-    this.email = email
-    this.name = name
-    this.birth = LocalDate.now()
-    this.addresses = emptyList()
+      return User(UUID.randomUUID(), email, name, hashedPassword, salt)
+    }
   }
 }

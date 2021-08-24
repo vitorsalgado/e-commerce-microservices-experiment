@@ -1,4 +1,4 @@
-package com.goshop.usersapp.utils
+package com.goshop.usersapp.utils.base
 
 abstract class Entity<T, TId> {
   abstract val id: TId

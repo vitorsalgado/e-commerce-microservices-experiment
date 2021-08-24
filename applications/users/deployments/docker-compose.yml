@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  userapi:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    container_name: userapi
+    init: true
+    restart: always
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring": { "data": { "mongodb": { "uri": "mongodb://root:root@mongo/test" } } }
+      }'
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - kafka
+      - kafkahq
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: debezium/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_PORT: 9092
+      ADVERTISED_PORT: 9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      ZOOKEEPER_CONNECT: zookeeper:2181
+    container_name: kafka
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+
+  kafkahq:
+    image: tchiotludo/kafkahq
+    container_name: kafkahq
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      KAFKAHQ_CONFIGURATION: |
+        kafkahq:
+          connections:
+            docker-kafka:
+              properties:
+                bootstrap.servers: "kafka:9092"
+    depends_on:
+      - kafka
